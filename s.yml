@@ -95,10 +95,10 @@
       lineinfile: dest=/etc/ssh/sshd_config regexp="^PermitRootLogin" line="PermitRootLogin no" state=present
       notify:
         - restart ssh
-    - name: Disallow password authentication since the access based on the key exchange is thought to be more secure
-      lineinfile: dest=/etc/ssh/sshd_config regexp="^PasswordAuthentication" line="PasswordAuthentication no" state=present
-      notify:
-        - restart ssh
+    #- name: Disallow password authentication since the access based on the key exchange is thought to be more secure
+    #  lineinfile: dest=/etc/ssh/sshd_config regexp="^PasswordAuthentication" line="PasswordAuthentication no" state=present
+    #  notify:
+    #    - restart ssh
     - name: Disable remote ssh server's reverse dns lookup procedure to gain time and prevent DNS vulnerability
       lineinfile: dest=/etc/ssh/sshd_config line="UseDNS no"
       notify:
@@ -126,13 +126,13 @@
       service: name=auditd state=started enabled=yes
       notify: auditdstart
 # File auditing while setting specific rules for both systems
-    - name: Configure rules and security policy in the /etc/audit/audit.rules
-      copy: src=/home/test/SecureMeAnsible/roles/SecureMe/files/Rules.txt dest=/etc/audit/audit.rules
-    - name: Start Auditd Daemon to load the new configuration
-      service: name=auditd state=restarted enabled=yes
-      notify: auditdrestart
-    - name: Launch a script that creates an overall security reports( Audit logs, summarily failure auth logs )
-      script: /home/test/SecureMeAnsible/roles/SecureMe/files/Report.sh
+    #- name: Configure rules and security policy in the /etc/audit/audit.rules
+    #  copy: src=/home/test/SecureMeAnsible/roles/SecureMe/files/Rules.txt dest=/etc/audit/audit.rules
+    #- name: Start Auditd Daemon to load the new configuration
+    #  service: name=auditd state=restarted enabled=yes
+    #  notify: auditdrestart
+    #- name: Launch a script that creates an overall security reports( Audit logs, summarily failure auth logs )
+    #  script: /home/test/SecureMeAnsible/roles/SecureMe/files/Report.sh
 # Shared memory can be used in an attack against a running service
     - name: Secure shared memory
       lineinfile: dest=/etc/fstab line="tmpfs     /run/shm     tmpfs     defaults,noexec,nosuid     0     0"
@@ -144,8 +144,8 @@
       service: name=fail2ban state=restarted
       notify:
          - Restart Fail2Ban
-    - name: Check the auditd rules, its status and the status of fail2ban configured jails
-      script: /home/test/SecureMeAnsible/roles/SecureMe/files/Status.sh
+  #  - name: Check the auditd rules, its status and the status of fail2ban configured jails
+  #    script: /home/test/SecureMeAnsible/roles/SecureMe/files/Status.sh
 # 3. Rkhunter is a tool that scans backdoors, rootkits and local exploits on a system, it scans hidden files, wrong permissions set on binaries, suspicious strings in kernel
     - name: Install RkHunter, CHKrootKit and Lynis(auditing tools) and ClamAV(antivirus engine designed for detecting Trojans, Viruses, Malwares...)
       apt: name={{ item }} state=latest update_cache=yes
@@ -170,8 +170,8 @@
       action: lineinfile dest=/etc/host.conf regexp="^order" line="order bind,hosts" state=present
     - name: Enable the nospoof argument
       action: lineinfile dest=/etc/host.conf regexp="^nospoof" line="nospoof on" state=present
-    - name: IP spoofing attempts will log a message to the syslog facility
-      action: lineinfile dest=/etc/host.conf regexp="^nospoof" line="nospoof on" state=present
+   # - name: IP spoofing attempts will log a message to the syslog facility
+  #    action: lineinfile dest=/etc/host.conf regexp="^nospoof" line="nospoof on" state=present
 # Directories and folder scanning with an open source Anti-virus ClamAV
     - name: ClamAV scanning for a specific directory or a file set beforehand with the admin
       shell: clamscan -ri /home/test/WAOUHMEHost/Audit 
@@ -191,8 +191,8 @@
       register: port
     - debug: var=port
 # Memory and disk statics
-    - name: Display the memory and the disk statics and save them in a daily report sent via mail every day within a cron job
-      script: /home/test/SecureMeAnsible/roles/SecureMe/files/MemStat.sh > /home/test/WAOUHMEHost/Audit/MemStat.{{ansible_date_time["date"]}}.log
+   # - name: Display the memory and the disk statics and save them in a daily report sent via mail every day within a cron job
+  #    script: /home/test/SecureMeAnsible/roles/SecureMe/files/MemStat.sh > /home/test/WAOUHMEHost/Audit/MemStat.{{ansible_date_time["date"]}}.log
 # Manage firewall with UFW in order to restrict access to the local machine with certain rules
 # UFW firewall configuration and  setting rules
 # To prevent the ignorance of the denial rule add it to before.rules under the # End required lines# line
@@ -284,8 +284,8 @@
       service: name=unattended-upgrades state=restarted
     - name: auditdstart
       service: name=auditd state=started
-    - name: auditdrestart
-      service: name=auditd state=restarted
+   # - name: auditdrestart
+  #    service: name=auditd state=restarted
     - name: Start Fail2Ban
       service: name=fail2ban state=started
     - name: Restart Fail2Ban
